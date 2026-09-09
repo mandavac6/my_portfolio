@@ -1,0 +1,176 @@
+{% from "_macros.html" import section_head, ring_svg %}
+{% set section = site.section('analytics') %}
+{% set chart = analytics.GROUNDEDNESS_CURVE %}
+
+<section class="section" id="{{ section.slug }}">
+  <div class="container">
+    {{ section_head(section) }}
+
+    <div class="grid grid-4 counters">
+      {% for c in site.counters %}
+      <div class="counter-card reveal" style="--reveal-delay: {{ loop.index0 * 70 }}ms">
+        <span class="counter-underline" aria-hidden="true"></span>
+        <p class="counter-value gradient-text-warm"
+           data-count-to="{{ c.target }}" data-decimals="{{ c.decimals }}"
+           data-prefix="{{ c.prefix }}" data-suffix="{{ c.suffix }}">
+          {{ c.prefix }}{{ '%.*f'|format(c.decimals, c.target) }}{{ c.suffix }}
+        </p>
+        <p class="counter-label">{{ c.label }}</p>
+        <p class="counter-sub">{{ c.sub }}</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="grid grid-2">
+      <article class="card panel reveal">
+        <header class="panel-head">
+          <h3>p95 Latency Budget</h3>
+          <span class="panel-badge">per answer</span>
+        </header>
+        <p class="panel-sub">Where the two-second budget goes on one grounded answer</p>
+        <div class="bar-chart">
+          {% for bar in analytics.LATENCY_BUDGET.bars %}
+          <div class="bar-col">
+            <div class="bar-track">
+              <span class="bar-grow" style="--h: {{ bar.height_pct }}%; --bar-delay: {{ loop.index0 * 90 }}ms">
+                <em class="bar-value">{{ bar.display }}</em>
+              </span>
+            </div>
+            <span class="bar-label">{{ bar.label }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="card panel reveal" style="--reveal-delay: 80ms">
+        <header class="panel-head">
+          <h3>Groundedness Curve</h3>
+          <span class="panel-badge">eval runs</span>
+        </header>
+        <p class="panel-sub">Clinical RAG groundedness across successive evaluation runs</p>
+        <div class="area-chart">
+          <svg viewBox="0 0 {{ chart.width }} {{ chart.height }}" preserveAspectRatio="none" role="img"
+               aria-label="Groundedness rising from 61% to {{ chart.last_label }} across ten evaluation runs">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop class="area-grad-from" offset="0%"/>
+                <stop class="area-grad-to" offset="100%"/>
+              </linearGradient>
+              <filter id="softGlow">
+                <feGaussianBlur stdDeviation="1.5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            {% for g in chart.grid_lines %}
+            <line class="chart-grid" x1="30" y1="{{ g.y }}" x2="{{ chart.width - 10 }}" y2="{{ g.y }}"
+                  stroke-width="0.5" stroke-dasharray="3 3"/>
+            {% endfor %}
+
+            {% for lbl in chart.y_labels %}
+            <text class="chart-axis" x="27" y="{{ lbl.y }}" text-anchor="end" font-size="6">{{ lbl.text }}</text>
+            {% endfor %}
+
+            <path d="{{ chart.area_path }}" fill="url(#areaGrad)"/>
+            <path class="area-line" pathLength="1" d="{{ chart.line_path }}" fill="none"
+                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+            {% for dot in chart.dots %}
+            <circle class="area-dot" cx="{{ dot.x }}" cy="{{ dot.y }}" r="2.5"
+                    style="--dot-delay: {{ 900 + loop.index0 * 60 }}ms"/>
+            {% endfor %}
+
+            <g class="area-flag">
+              <rect x="{{ chart.last.x - 15 }}" y="{{ chart.last.y - 12 }}" width="30" height="11" rx="3"
+                    stroke-width="0.5"/>
+              <text x="{{ chart.last.x }}" y="{{ chart.last.y - 4.2 }}" text-anchor="middle"
+                    font-size="5.5" font-weight="700">{{ chart.last_label }}</text>
+            </g>
+          </svg>
+        </div>
+      </article>
+    </div>
+
+    <article class="card panel reveal">
+      <h3 class="panel-title">Core Proficiency</h3>
+      <p class="panel-sub">Self-assessed depth in the tools I reach for first</p>
+      <div class="rings">
+        {% for r in analytics.RINGS %}
+        <div class="ring-item" style="--ring-delay: {{ loop.index0 * 80 }}ms">
+          {{ ring_svg(r) }}
+          <p class="ring-label">{{ r.label }}</p>
+          <p class="ring-sub">{{ r.sublabel }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+
+    <article class="card panel reveal">
+      <h3 class="panel-title">RAG Pipeline</h3>
+      <p class="panel-sub">Document to grounded answer, with evaluation closing the loop</p>
+      <ol class="flow">
+        {% for stage in analytics.PIPELINE %}
+        <li class="flow-stage" style="--stage-delay: {{ loop.index0 * 120 }}ms">
+          <span class="flow-node">
+            <span class="flow-pulse" style="--d: {{ loop.index0 * 0.5 }}s" aria-hidden="true"></span>
+            <span class="flow-icon">{{ stage.icon | safe }}</span>
+          </span>
+          <p class="flow-label">{{ stage.label }}</p>
+          <p class="flow-sub">{{ stage.sub }}</p>
+          {% if not loop.last %}<span class="flow-link" aria-hidden="true"><i style="--d: {{ loop.index0 * 0.3 }}s"></i></span>{% endif %}
+        </li>
+        {% endfor %}
+      </ol>
+    </article>
+
+    <article class="card panel reveal">
+      <header class="panel-head">
+        <div>
+          <h3>Eval &amp; Indexing Job Density</h3>
+          <p class="panel-sub">Illustrative run density across a working week — darker is busier</p>
+        </div>
+        <div class="legend">
+          <span>Less</span>
+          {% for o in [0.05, 0.25, 0.5, 0.75, 0.95] %}
+          <i style="--o: {{ o }}"></i>
+          {% endfor %}
+          <span>More</span>
+        </div>
+      </header>
+
+      <div class="heatmap">
+        <div class="heatmap-rows">
+          {% for label in analytics.HEATMAP.rows %}<span>{{ label }}</span>{% endfor %}
+        </div>
+        <div class="heatmap-grid" style="--cols: {{ analytics.HEATMAP.cols }}">
+          {% for cell in analytics.HEATMAP.cells %}
+          <i style="--o: {{ cell.opacity }}; --cell-delay: {{ cell.delay_ms }}ms"></i>
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+
+    <article class="card panel reveal">
+      <h3 class="panel-title">Latency, Before and After</h3>
+      <p class="panel-sub">Wall-clock time to an answer once retrieval and streaming replaced batch and manual lookup</p>
+      <div class="latency">
+        {% for row in analytics.LATENCY_ROWS %}
+        <div class="latency-row">
+          <div class="latency-head">
+            <span class="latency-label">{{ row.label }}</span>
+            <span class="latency-values">
+              Before <b class="before">{{ row.before_label }}</b>
+              <span class="arrow">&rarr;</span>
+              After <b class="after">{{ row.after_label }}</b>
+            </span>
+          </div>
+          <div class="latency-track">
+            <span class="latency-before" aria-hidden="true"></span>
+            <span class="latency-after" style="--w: {{ row.ratio_pct | round(2) }}%; --bar-delay: {{ loop.index0 * 110 }}ms"></span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+  </div>
+</section>

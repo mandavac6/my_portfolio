@@ -1,0 +1,64 @@
+{% from "_macros.html" import section_head %}
+{% set section = site.section('projects') %}
+
+<section class="section" id="{{ section.slug }}">
+  <div class="container">
+    {{ section_head(section) }}
+
+    <div class="grid grid-2">
+      {% for p in site.projects %}
+      <article class="card card-accent project reveal" style="--reveal-delay: {{ loop.index0 * 80 }}ms; {{ p.accent.css }}">
+        <header class="project-head">
+          <div>
+            <p class="project-domain">{{ p.domain }}</p>
+            <h3 class="project-title">{{ p.title }}</h3>
+          </div>
+          <button class="project-toggle" type="button"
+                  aria-expanded="false" aria-controls="detail-{{ p.slug }}"
+                  data-project-toggle>
+            <span class="sr-only">Show breakdown for {{ p.title }}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+          </button>
+        </header>
+
+        <p class="project-summary">{{ p.summary }}</p>
+
+        <div class="tags">
+          {% for tag in p.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </div>
+
+        <div class="metrics">
+          {% for m in p.metrics %}
+          <div class="metric">
+            <p class="metric-value">{{ m.value }}</p>
+            <p class="metric-label">{{ m.label }}</p>
+            <p class="metric-sub">{{ m.sub }}</p>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="project-detail" id="detail-{{ p.slug }}" hidden>
+          <div class="project-detail-inner">
+            <div>
+              <p class="detail-head problem">Problem</p>
+              <p class="detail-body">{{ p.problem }}</p>
+            </div>
+            <div>
+              <p class="detail-head contribution">Contribution</p>
+              <p class="detail-body">{{ p.contribution }}</p>
+            </div>
+            <div>
+              <p class="detail-head outcome">Outcome</p>
+              <p class="detail-body">{{ p.outcome }}</p>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <p class="grid-hint reveal">Expand any card for the full problem, contribution, and outcome.</p>
+  </div>
+</section>

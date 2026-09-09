@@ -1,0 +1,32 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# build output
+dist/
+build/
+
+# env
+.env
+.env.*
+!.env.example
+
+# editors / os
+.DS_Store
+.idea/
+.vscode/
+
+# deploy
+.vercel
+
+# claude
+.claude
+.claude*
+legacy_nextjs/

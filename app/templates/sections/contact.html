@@ -1,0 +1,51 @@
+{% from "_macros.html" import section_head %}
+{% set section = site.section('contact') %}
+
+<section class="section" id="{{ section.slug }}">
+  <div class="container">
+    {{ section_head(section) }}
+
+    <div class="contact-grid">
+      <div class="card panel reveal">
+        <h3 class="panel-title">Direct contact</h3>
+        <div class="contact-links">
+          {% for s in site.socials %}
+          <a class="contact-link" href="{{ s.href }}"{% if s.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+            <span class="contact-icon" aria-hidden="true">
+              {% if s.icon == 'mail' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              {% elif s.icon == 'phone' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.6a1 1 0 01.95.68l1.1 3.3a1 1 0 01-.24 1L8 9.5a12 12 0 006.5 6.5l1.5-1.4a1 1 0 011-.25l3.3 1.1a1 1 0 01.7.95V19a2 2 0 01-2 2h-1C10.6 21 3 13.4 3 6V5z"/></svg>
+              {% elif s.icon == 'linkedin' %}
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.86-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+              {% else %}
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 00-3.79 23.4c.6.1.82-.26.82-.58v-2c-3.34.73-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.4 1.24-3.25-.13-.3-.54-1.53.11-3.18 0 0 1.01-.32 3.3 1.24a11.4 11.4 0 016 0c2.29-1.56 3.3-1.24 3.3-1.24.65 1.65.24 2.88.12 3.18.77.85 1.23 1.93 1.23 3.25 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12 12 0 0012 .5z"/></svg>
+              {% endif %}
+            </span>
+            <span class="contact-text">
+              <span class="contact-label">{{ s.label }}</span>
+              <span class="contact-value">{{ s.value }}</span>
+            </span>
+            <span class="contact-arrow" aria-hidden="true">&#8599;</span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card panel reveal" style="--reveal-delay: 90ms">
+        <h3 class="panel-title">Role preferences</h3>
+        <ul class="pref-list">
+          {% for role in site.role_preferences %}
+          <li><span class="pref-dot" aria-hidden="true"></span>{{ role }}</li>
+          {% endfor %}
+        </ul>
+        <p class="pref-note">Based in {{ profile.location }}. Open to hybrid and remote.</p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>{{ profile.name }} &nbsp;&middot;&nbsp; {{ profile.title }} &nbsp;&middot;&nbsp; {{ profile.location }}</p>
+      <p class="footer-year">{{ site.year }}</p>
+    </footer>
+  </div>
+</section>

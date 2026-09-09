@@ -1,0 +1,66 @@
+{% from "_macros.html" import section_head %}
+{% set section = site.section('about') %}
+
+<section class="section" id="{{ section.slug }}">
+  <div class="container">
+    {{ section_head(section) }}
+
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <h3 class="about-lead">{{ site.about_lead }}</h3>
+        {% for para in site.about_paragraphs %}
+        <p class="about-para">{{ para }}</p>
+        {% endfor %}
+
+        <div class="about-education">
+          {% for ed in site.education %}
+          <div class="education-row">
+            <div>
+              <p class="education-degree">{{ ed.degree }}</p>
+              <p class="education-school">{{ ed.school }} &middot; {{ ed.location }}</p>
+            </div>
+            <span class="education-period">{{ ed.period }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <aside class="about-side reveal" style="--reveal-delay: 90ms">
+        <div class="identity-card">
+          <div class="identity-avatar">{{ profile.initials }}</div>
+          <p class="identity-name">{{ profile.name }}</p>
+          <p class="identity-role">{{ profile.title }}</p>
+        </div>
+
+        <div class="facts">
+          {% for fact in site.quick_facts %}
+          <div class="fact">
+            <span class="fact-icon">{{ fact.icon | safe }}</span>
+            <div>
+              <p class="fact-label">{{ fact.label }}</p>
+              {% if fact.href %}
+              <a class="fact-value link" href="{{ fact.href }}"{% if fact.external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ fact.value }}</a>
+              {% else %}
+              <p class="fact-value">{{ fact.value }}</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="certs">
+          <p class="micro-label mb">Certifications</p>
+          {% for cert in site.certifications %}
+          <div class="cert">
+            <span class="cert-mark" aria-hidden="true"></span>
+            <div>
+              <p class="cert-name">{{ cert.name }}</p>
+              <p class="cert-issuer">{{ cert.issuer }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

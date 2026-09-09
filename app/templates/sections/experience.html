@@ -1,0 +1,44 @@
+{% from "_macros.html" import section_head %}
+{% set section = site.section('experience') %}
+
+<section class="section" id="{{ section.slug }}">
+  <div class="container">
+    {{ section_head(section) }}
+
+    <div class="timeline">
+      <span class="timeline-line" aria-hidden="true"></span>
+
+      <ol class="timeline-items">
+        {% for role in site.roles %}
+        <li class="timeline-item reveal" style="--reveal-delay: {{ loop.index0 * 70 }}ms; {{ role.accent.css }}">
+          <span class="timeline-dot" aria-hidden="true"></span>
+
+          <article class="card card-accent role">
+            <div class="role-top-accent" aria-hidden="true"></div>
+
+            <header class="role-head">
+              <div>
+                <span class="domain-badge">{{ role.domain }}</span>
+                <h3 class="role-title">{{ role.title }}</h3>
+                <p class="role-company">{{ role.company }}</p>
+                <p class="role-location">{{ role.location }}</p>
+              </div>
+              <span class="role-period">{{ role.period }}</span>
+            </header>
+
+            <ul class="role-highlights">
+              {% for line in role.highlights %}
+              <li><span class="bullet" aria-hidden="true"></span><span>{{ line }}</span></li>
+              {% endfor %}
+            </ul>
+
+            <div class="tags">
+              {% for tag in role.tags %}<span class="tag tag-quiet">{{ tag }}</span>{% endfor %}
+            </div>
+          </article>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</section>

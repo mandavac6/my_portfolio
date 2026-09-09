@@ -1,0 +1,35 @@
+{# Shared building blocks. #}
+
+{% macro section_head(section, delay=0) %}
+<div class="section-head reveal" style="--reveal-delay: {{ delay }}ms">
+  <p class="eyebrow">{{ section.eyebrow }}</p>
+  <h2 class="section-title">{{ section.title }} <span class="gradient-text">{{ section.title_accent }}</span></h2>
+  {% if section.blurb %}<p class="section-blurb">{{ section.blurb }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{# A progress ring. `ring` is an app.charts.Ring. #}
+{% macro ring_svg(ring) %}
+<div class="ring">
+  <svg width="{{ ring.size }}" height="{{ ring.size }}" viewBox="0 0 {{ ring.size }} {{ ring.size }}" aria-hidden="true">
+    <circle class="ring-bg" cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}"
+            fill="none" stroke-width="{{ ring.stroke }}"></circle>
+    <circle class="ring-track" cx="{{ ring.center }}" cy="{{ ring.center }}" r="{{ ring.radius }}"
+            fill="none" stroke="{{ ring.color }}" stroke-width="{{ ring.stroke }}" stroke-linecap="round"
+            stroke-dasharray="{{ ring.circumference }}"
+            style="--dash-full: {{ ring.circumference }}; --dash-offset: {{ ring.offset }}"></circle>
+  </svg>
+  <span class="ring-value" style="color: {{ ring.color }}">{{ ring.pct }}%</span>
+</div>
+{% endmacro %}
+
+{# A dashboard value that cycles through readings. #}
+{% macro ticker(t) %}
+<span class="ticker" data-ticker='{{ t.values | tojson }}' data-interval="{{ t.interval_ms }}">{{ t.values[0] }}</span>
+{% endmacro %}
+
+{% macro tag_list(tags, cls="tag") %}
+<div class="tags">
+  {% for tag in tags %}<span class="{{ cls }}">{{ tag }}</span>{% endfor %}
+</div>
+{% endmacro %}

@@ -1,0 +1,28 @@
+<a class="skip-link" href="#top">Skip to content</a>
+
+<header class="nav" id="site-nav" data-nav>
+  <nav class="nav-inner container" aria-label="Primary">
+    <a class="brand" href="#top">
+      <span class="brand-mark">{{ profile.initials }}</span>
+      <span class="brand-name">{{ profile.name }}</span>
+    </a>
+
+    <ul class="nav-links">
+      {% for s in site.nav_sections %}
+      <li><a class="nav-link" href="#{{ s.slug }}">{{ s.nav_label }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu" data-nav-toggle>
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <ul class="container">
+      {% for s in site.nav_sections %}
+      <li><a href="#{{ s.slug }}" data-nav-close>{{ s.nav_label }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</header>

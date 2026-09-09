@@ -1,0 +1,39 @@
+{% from "_macros.html" import section_head %}
+{% set section = site.section('skills') %}
+
+<section class="section" id="{{ section.slug }}">
+  <div class="container">
+    {{ section_head(section) }}
+
+    <div class="grid grid-3 skills-grid">
+      {% for cat in site.skill_categories %}
+      <article class="card card-accent reveal" style="--reveal-delay: {{ loop.index0 * 70 }}ms; {{ cat.accent.css }}">
+        <header class="card-head">
+          <span class="card-icon">{{ cat.icon | safe }}</span>
+          <h3>{{ cat.title }}</h3>
+        </header>
+        <ul class="skill-list">
+          {% for skill in cat.skills %}
+          <li class="skill">
+            <div class="skill-row">
+              <span class="skill-name">{{ skill.name }}</span>
+              <span class="skill-level">{{ skill.level }}%</span>
+            </div>
+            <div class="bar" role="img" aria-label="{{ skill.name }}: {{ skill.level }} out of 100">
+              <span class="bar-fill" style="--level: {{ skill.level }}%; --bar-delay: {{ loop.index0 * 60 }}ms"></span>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="reveal" style="--reveal-delay: 120ms">
+      <p class="micro-label stack-label">Full Technology Stack</p>
+      <div class="chips">
+        {% for tag in site.tech_stack %}<span class="chip">{{ tag }}</span>{% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
