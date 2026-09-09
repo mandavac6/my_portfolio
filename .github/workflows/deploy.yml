@@ -1,0 +1,72 @@
+name: Deploy to GitHub Pages
+
+# Builds the static export and publishes it. The test suite gates the deploy:
+# a red build never reaches the live site.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a newer push supersede an in-flight deploy, but never cancel one midway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build static site
+        env:
+          # Bust the CSS/JS cache on every deploy.
+          ASSET_VERSION: ${{ github.sha }}
+        run: python scripts/export_static.py --base-url "${{ steps.pages.outputs.base_url }}"
+
+      - name: Check the export looks sane
+        run: |
+          test -f dist/index.html
+          test -f dist/static/css/styles.css
+          test -f dist/static/js/main.js
+          # Absolute /static/ paths would 404 on a project site served from a
+          # subpath, so fail loudly rather than shipping a page with no CSS.
+          ! grep -q 'href="/static/' dist/index.html
+          ! grep -q 'src="/static/' dist/index.html
+          grep -q "Naveen Mandava" dist/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

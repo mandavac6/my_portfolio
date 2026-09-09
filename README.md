@@ -5,9 +5,6 @@ bottom: FastAPI serves one Jinja2-rendered page, and every number, label, and
 SVG path in the HTML comes from typed Python data. Warm light theme — paper
 ground, caramel accents, near-black warm ink.
 
-This is a rewrite of an earlier Next.js/React/Tailwind site. The visual design
-carried over; the JavaScript did not. The old source is kept under
-[`legacy_nextjs/`](legacy_nextjs/) for reference and is not part of the build.
 
 ## Quick start
 
@@ -105,6 +102,12 @@ python scripts/export_static.py --base-url https://your-domain.com
 That writes `dist/` (index.html, static assets, robots.txt, sitemap.xml). Point
 GitHub Pages, Netlify, Cloudflare Pages, or Vercel at it. `vercel.json` already
 runs this as the build command.
+
+`.github/workflows/deploy.yml` does this on every push to `main`: installs
+dependencies, runs the test suite, exports the site with `ASSET_VERSION` set to
+the commit SHA, checks the output, then publishes to GitHub Pages. A failing
+test blocks the deploy. Enable it once under **Settings -> Pages -> Source ->
+GitHub Actions**.
 
 **As a service** — `Dockerfile` builds a uvicorn image:
 
